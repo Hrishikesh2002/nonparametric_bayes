@@ -172,6 +172,6 @@ if __name__ == "__main__":
     
     print("Accuracy: ", calculate_accuracy(Z, sampler.Z))
     
-    
+
     
     
