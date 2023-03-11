@@ -1,0 +1,32 @@
+1) Bayesian estimation
+2) Gibbs sampling
+3) Collapsed Gibbs Sampling
+4) Bayesian estimation for finite mixture models
+
+
+Check out bnpy library.
+
+Do statistical pattern recognition course (at least the bayesian estimation part)
+
+Ask chidaksh about his work
+
+Next Meet: 11 Jan 2023
+
+
+Feb 1: 
+
+1) Clean up the pdf and write in my own words
+
+2) Derive conditional probability for Finite Mixture Models (first univariate gaussian, then GMM)
+
+3) Implement Gibbs sampling for FMM
+
+4) Read Chapter 10 from Bishop book
+
+5) Watch Statistical Pattern Recognition lectures
+
+6) Check out Wishart distribution; Bayesian Linear Regression
+
+7) How to find k using bayesian methods for k-means
+
+Next Meet: 8 Feb 2023
