@@ -33,19 +33,19 @@ class GMM:
 class Gibbs_sampler:
     
     def __init__(self, X, k, m, p, a, b) -> None:
-        self.X = X
+        self.X = np.array(X)
         self.N = len(X)
         self.m = m
         self.p = p
         self.a = a
         self.b = b
         self.K = k
-        self.pi = np.array([1/k for i in range(k)])
-        self.beta = np.array([1 for i in range(k)])
-        self.mu = np.array([0 for i in range(k)])
-        self.nu = np.array([10 for i in range(k)])
+        self.pi = np.array([1/k for i in range(k)], dtype=float)
+        self.beta = np.array([1.0 for i in range(k)], dtype=float)
+        self.mu = np.array([0.0 for i in range(k)], dtype=float)
+        self.nu = np.array([10.0 for i in range(k)], dtype=float)
         self.Z = np.random.choice([i for i in range(k)], size=self.N)
-        self.n_k = np.array([0 for i in range(k)])
+        self.n_k = np.array([0.0 for i in range(k)])
     
     def calculate_n_k(self):
         self.n_k = np.array([0 for i in range(self.K)])
@@ -83,11 +83,12 @@ class Gibbs_sampler:
             self.mu[k] = np.random.normal(m_k_star, 1/np.sqrt(p_k_star*self.nu[k]))
             
             a_k_star = self.a + self.n_k[k]/2
-            b_k_star = self.b + sum([(self.X[i])**2 for i in range(self.N) if self.Z[i] == k])/2 + (self.p*self.m**2)/2 - p_k_star*m_k_star**2
+            b_k_star = self.b + sum([(self.X[i])**2 for i in range(self.N) if self.Z[i] == k])/2 + (self.p*self.m**2- p_k_star*m_k_star**2)/2 
             
             # print("a_k_star: ", a_k_star)
             # print("b_k_star: ", b_k_star)
-            # self.nu[k] = np.random.gamma(a_k_star, 1/b_k_star)
+            self.nu[k] = np.random.gamma(a_k_star, 1/b_k_star)
+            # print("nu: ", self.nu[k])
             
     def reorder_mu(self):
         for i in range(self.K):
@@ -114,7 +115,7 @@ class Gibbs_sampler:
             self.estimate_Z()
             
         self.reorder_mu()
-         
+        
             
     
     def print_parameters(self):
@@ -142,7 +143,7 @@ if __name__ == "__main__":
     
     #generate data
     
-    gmm = GMM(k=3, mu=[0, 5, 20], nu=[1, 1, 1], pi=[1/3, 1/3, 1/3])
+    gmm = GMM(k=3, mu=[0, 7, 20], nu=[1, 1, 1], pi=[1/3, 1/3, 1/3])
     X, Z = gmm.sample(50)
     
     print("X: ", X)
@@ -151,27 +152,27 @@ if __name__ == "__main__":
         
     #Use Gibbs sampling to estimate the parameters of the GMM
     sampler = Gibbs_sampler(X, k=3, m=0, p=1, a=100, b=100)
-    sampler.nu = np.array([1, 1, 1])
-    
-    # sampler.estimate_parameters(7000)
-    # sampler.print_parameters()
-    # sampler.print_Z()
-
     
     
     #Plot the data after every 100 iterations
+    print("Plotting the data after every 100 iterations")
+    # print(sampler.Z)
+    
+    plt.scatter(X, [0 for i in range(len(X))], c=sampler.Z)
+    plt.title("Initial Cluster Assignment.....")
+    plt.xlabel("X")
+    plt.show()
     
     for i in range(0, 1000, 100):
         sampler.estimate_parameters(100)
         plt.scatter(X, [0 for i in range(len(X))], c=sampler.Z)
-        plt.title("Iteration: " + str(i))
+        plt.title("Iteration: " + str(i + 100))
         plt.xlabel("X")
         plt.show()
+        # print(sampler.Z)
         
     print("Cluster assignments according to the estimated model: ", sampler.Z)
     
+    sampler.print_parameters()
+    
     print("Accuracy: ", calculate_accuracy(Z, sampler.Z))
-    
-
-    
-    
